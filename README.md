@@ -38,7 +38,11 @@ $ pip3 install -r requirements.txt
 $ docker build -t scant3r https://github.com/knassar702/scant3r.git
 $ docker run -it scant3r -h
 ```
-
+### Update to latest version:
+```bash
+$ cd scant3r
+$ git pull
+```
 **Usage**
 * normal scan
 ```bash
