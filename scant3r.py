@@ -151,7 +151,10 @@ if __name__ == '__main__':
         for url in sys.stdin:
             url = url.rstrip()
             all_options['url'].append(url)
-    dump_alloptions(all_options)
+    if opts.nologo:
+        pass
+    else:
+        dump_alloptions(all_options)
     from vuln import txss,trce,tsqli,tssti
     if module:
         for M in module:
