@@ -414,7 +414,7 @@ def run(opts):
 # Examples :
 *  **open urls**
 ```python
-from libs import NeqRequest as nq
+from libs import NewRequest as nq
 
 
 def run(opts):
