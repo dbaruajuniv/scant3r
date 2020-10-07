@@ -428,7 +428,7 @@ def run(opts):
 * **add threads**
 
 ```python
-from libs import NeqRequest as nq
+from libs import NewRequest as nq
 from threading import Thread
 from queue import Queue
 
