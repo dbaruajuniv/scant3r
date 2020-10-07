@@ -332,12 +332,11 @@ us.en.kb.sony.com 160.33.196.15
 
 
 ### writing your scant3r module
-
-#### all functions
+## all functions
 
 | function              | Description                   |
 | :-------------    | :-------------                |
-| NewRequest | http request module |
+| NewRequest | http request module with all user options (cookies/headers/etc..)|
 | post_data | add modules value to dictionary (for cookies,post/put parameters)|
 | urlencoder | url encoding|
 | ShowMessage | print output of scanner/modules|
@@ -401,7 +400,7 @@ http://site.com/?msg=" OR 1=1 --hi
 >> show.bug(bug='Cross-site scripting',payload='<img src=x onerror=alert(1)>',method='GET',parameter='q',target='http://mysite.com',link='q=<img src=x onerror=alert(1)>')
 
 ```
-### example
+### main function
 
 ```python
 
@@ -411,7 +410,9 @@ def run(opts):
 # {'proxy': None, 'cookie': None, 'timeout': 10, 'Headers': {}, 'list': None, 'random-agent': False, 'threads': 20, 'module': None, 'url': [], 'host': None}
   
 ```
-### open urls
+
+# Examples :
+*  **open urls**
 ```python
 from libs import NeqRequest as nq
 
@@ -424,7 +425,7 @@ def run(opts):
         print(f'[+] Done :> {url}')
       
 ```
-* add threads
+* **add threads**
 
 ```python
 from libs import NeqRequest as nq
@@ -451,7 +452,6 @@ def run(opts):
   q.join()
 ```
 save it in `scant3r/modules/myscript.py`
-
 run 
 ```
 $ echo 'http://google.com'|python3 scant3r.py -m myscript
@@ -504,4 +504,3 @@ def NEON_CVE(url):
             show.bug(bug='Cross-site scripting',payload='<img src=x onerror=alert(1)>',method='GET',parameter='q',target=u,link='q=<img src=x onerror=alert(1)>')
   
 ```
-
