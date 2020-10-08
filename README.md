@@ -18,6 +18,7 @@ with Scant3r you will have more time to look into functions and get Easy bugs on
 | **hostping** | get live domains|
 | **crlf** | CRLF vulnerability scanner|
 | **paths** | dirbrute forcing|
+| **reflect** | find reflected parameters|
 | **neon** | scans admin panel from CVE-2019-20141 |
 
 ***
