@@ -6,6 +6,7 @@ __version__ = '0.5#Beta'
 
 from libs import NewRequest as nq
 from libs import post_data,insertAfter
+from libs import urlencoder as en
 from core import ShowMessage as show
 from urllib.parse import urlparse
 from random import randint
@@ -24,10 +25,10 @@ class Xss:
     def Get(url):
         for param in url.split("?")[1].split("&"):
             for payload in xss_payloads:
-                req = nq.Get(url.replace(param,param + payload))
+                req = nq.Get(url.replace(param,param + en(payload)))
                 if req != 0:
                     if payload.encode('utf-8') in req.content:
-                        show.bug(bug='Cross-site scripting',payload=payload,method='GET',parameter=param,link=url.replace(param,param + payload))
+                        show.bug(bug='Cross-site scripting',payload=payload,method='GET',parameter=param,link=url.replace(param,param + en(payload)))
                         break
     def Post(url):
         for param in url.split('?')[1].split('&'):
@@ -64,14 +65,14 @@ class Sqli:
                 if r == 0:
                     break
                 save_request.save(r)
-                req = nq.Get(url.replace(param,param + payload))
+                req = nq.Get(url.replace(param,param + en(payload)))
                 if req == 0:
                     break
                 for n,e in sql_err.items():
                     r2 = findall(e.encode('utf-8'),save_request.get().content)
                     r3 = findall(e.encode('utf-8'),req.content)
                     if len(r2) < len(r3):
-                        show.bug(bug='SQL injection',payload=payload,method='GET',parameter=param,target=url.split('?')[0],link=url.replace(param,param + payload))
+                        show.bug(bug='SQL injection',payload=payload,method='GET',parameter=param,target=url.split('?')[0],link=url.replace(param,param + en(payload)))
                         break
     def Post(url):
         for param in url.split('?')[1].split('&'):
@@ -120,11 +121,11 @@ class RCE:
                 if r == 0:
                     break
                 r = len(findall(message.encode('utf-8'),r.content))
-                req = nq.Get(url.replace(param,param + payload))
+                req = nq.Get(url.replace(param,param + en(payload)))
                 if req == 0:
                     break
                 if r < len(findall(message.encode('utf-8'),req.content)):
-                    show.bug(bug='command injection',payload=payload.replace('\n','%0a'),method='GET',parameter=param,link=url.replace(param,param + payload).replace('\n','%0a'))
+                    show.bug(bug='command injection',payload=payload.replace('\n','%0a'),method='GET',parameter=param,link=url.replace(param,param + en(payload)))
                     break
     def Post(url):
         for param in url.split('?')[1].split('&'):
@@ -166,11 +167,11 @@ class SSTI:
                 if r == 0:
                     break
                 r = len(findall(message.encode('utf-8'),r.content))
-                req = nq.Get(url.replace(param,param + payload))
+                req = nq.Get(url.replace(param,param + en(payload)))
                 if req == 0:
                     break
                 if r < len(findall(message.encode('utf-8'),req.content)):
-                    show.bug(bug='template injection',payload=payload,method='GET',parameter=param,link=url.replace(param,param + payload))
+                    show.bug(bug='template injection',payload=payload,method='GET',parameter=param,link=url.replace(param,param + en(payload)))
                     break
     def Post(url):
         for param in url.split('?')[1].split('&'):
@@ -203,3 +204,21 @@ class SSTI:
                     break
                 if r < len(findall(message.encode('utf-8'),req.content)):
                     show.bug(bug='template injection',payload=payload,method='PUT',parameter=param,target=url.split('?')[0],link=data)
+
+class CRLF:
+    def Get(url):
+        for param in url.split('?')[1].split('&'):
+            for payload in crlf_payloads:
+                r = nq.Get(url.replace(param,param + en(payload)))
+                if r == 0:
+                    break
+                if 'BLATRUC' == r.headers.get('Header-Test'):
+                    show.bug(
+                    bug='CRLF injection',
+                    payload=payload.replace('\n','%0a').replace('\r','%0d'),
+                    method='GET',
+                    parameter=param,
+                    link=url.replace(param,param + en(payload))
+                            )
+                else:
+                    continue

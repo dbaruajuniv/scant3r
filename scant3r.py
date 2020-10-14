@@ -21,6 +21,7 @@ a = Queue()
 b = Queue()
 c = Queue()
 d = Queue()
+r = Queue()
 helper = """{yellow}
 Options:
     -h  | show help message and exit
@@ -155,7 +156,7 @@ if __name__ == '__main__':
         pass
     else:
         dump_alloptions(all_options)
-    from vuln import txss,trce,tsqli,tssti
+    from vuln import txss,tcrlf,trce,tsqli,tssti
     if module:
         for M in module:
             module_process(module=M,all_options=all_options)
@@ -176,6 +177,9 @@ if __name__ == '__main__':
         p4 = Thread(target=tssti,args=(d,))
         p4.daemon = True
         p4.start()
+        p5 = Thread(target=tcrlf,args=(r,))
+        p5.daemon = True
+        p5.start()
     for url in all_options['url']:
         url = url.rstrip()
         if '?' in url and '=' in url:
@@ -183,7 +187,9 @@ if __name__ == '__main__':
             b.put(url)
             c.put(url)
             d.put(url)
+            r.put(url)
     a.join()
     b.join()
     c.join()
     d.join()
+    r.join()

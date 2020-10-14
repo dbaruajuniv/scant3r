@@ -2,7 +2,7 @@
 
 **Why would you use Scant3r?**
 
-Scant3r Scans all URLs with multiple HTTP Methods and Tries to look for bugs with basic exploits as **XSS - SQLI - RCE - SSTI** from Headers and URL Parameters
+Scant3r Scans all URLs with multiple HTTP Methods and Tries to look for bugs with basic exploits as **XSS - SQLI - RCE - CRLF -SSTI** from Headers and URL Parameters
 By chaining [waybackurls](https://github.com/tomnomnom/waybackurls) or [gau](https://github.com/lc/gau) <br>
 with Scant3r you will have more time to look into functions and get Easy bugs on the way :)
 
@@ -16,7 +16,6 @@ with Scant3r you will have more time to look into functions and get Easy bugs on
 | **lorsrf** | Bruteforcing on Hidden parameters to find SSRF vulnerability |
 | **headers** | inject **SSTI - XSS - RCE - SQLI** payloads in HTTP Headers |
 | **hostping** | get live domains|
-| **crlf** | CRLF vulnerability scanner|
 | **paths** | dirbrute forcing|
 | **reflect** | find reflected parameters|
 | **neon** | scans admin panel from CVE-2019-20141 |

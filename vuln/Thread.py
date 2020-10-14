@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from vuln import Xss,Sqli,RCE,SSTI
+from vuln import Xss,CRLF,Sqli,RCE,SSTI
 from threading import Thread
 from queue import Queue
 
@@ -30,4 +30,9 @@ def txss(q):
         Xss.Get(item)
         Xss.Post(item)
         Xss.Put(item)
+        q.task_done()
+def tcrlf(q):
+    while True:
+        item = q.get()
+        CRLF.Get(item)
         q.task_done()
