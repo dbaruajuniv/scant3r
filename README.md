@@ -33,7 +33,7 @@ $ pip3 install -r requirements.txt
 ```
 
 ### Docker ![DOCKER](https://img.icons8.com/color/48/000000/docker.png)
-
+* for scant3r API
 ```bash
 $ docker build -t scant3r https://github.com/knassar702/scant3r.git
 $ docker run --rm -d -p 6040:6040 --name scant3r -it scant3r
