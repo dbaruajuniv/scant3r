@@ -28,8 +28,16 @@ class Xss:
                 req = nq.Get(url.replace(param,param + en(payload)))
                 if req != 0:
                     if payload.encode('utf-8') in req.content:
+                        bug = {
+                                'name':'Corss-site scripting',
+                                'payload':payload,
+                                'method':'GET',
+                                'parameter':param,
+                                'link':url.replace(param,param + en(payload))
+                                }
                         show.bug(bug='Cross-site scripting',payload=payload,method='GET',parameter=param,link=url.replace(param,param + en(payload)))
-                        break
+                        return bug
+        return None
     def Post(url):
         for param in url.split('?')[1].split('&'):
             for payload in xss_payloads:
@@ -41,8 +49,17 @@ class Xss:
                 if req == 0:
                     break
                 if payload.encode('utf-8') in req.content:
+                    bug = {
+                            'name':'Corss-site scripting',
+                            'payload':payload,
+                            'method':'POST',
+                            'parameter':param,
+                            'target':url.split('?')[0],
+                            'data':data
+                            }
                     show.bug(bug='Cross-site scripting',payload=payload,method='POST',parameter=param,target=url.split('?')[0],link=data)
-                    break
+                    return bug
+        return None
     def Put(url):
         for param in url.split('?')[1].split('&'):
             for payload in xss_payloads:
@@ -54,8 +71,17 @@ class Xss:
                 if req == 0:
                     break
                 if payload.encode('utf-8') in req.content:
+                    bug = {
+                            'name':'Corss-site scripting',
+                            'payload':payload,
+                            'method':'PUT',
+                            'parameter':param,
+                            'target':url.split('?')[0],
+                            'data':data
+                            }
                     show.bug(bug='Cross-site scripting',payload=payload,method='PUT',parameter=param,target=url.split('?')[0],link=data)
-                    break
+                    return bug
+        return None
 
 class Sqli:
     def Get(url):
@@ -65,15 +91,24 @@ class Sqli:
                 if r == 0:
                     break
                 save_request.save(r)
-                req = nq.Get(url.replace(param,param + en(payload)))
+                req = nq.Get(url.replace(param,param + payload))
                 if req == 0:
                     break
                 for n,e in sql_err.items():
                     r2 = findall(e.encode('utf-8'),save_request.get().content)
                     r3 = findall(e.encode('utf-8'),req.content)
                     if len(r2) < len(r3):
+                        bug = {
+                                'name':'SQL injection',
+                                'payload':payload,
+                                'method':'GET',
+                                'parameter':param,
+                                'link':url.replace(param,param + en(payload)),
+                                'target':url.split('?')[0]
+                                }
                         show.bug(bug='SQL injection',payload=payload,method='GET',parameter=param,target=url.split('?')[0],link=url.replace(param,param + en(payload)))
-                        break
+                        return bug
+        return None
     def Post(url):
         for param in url.split('?')[1].split('&'):
             for payload in sqli_payloads:
@@ -92,8 +127,17 @@ class Sqli:
                     r = findall(e.encode('utf-8'),save_request.get().content)
                     r2 = findall(e.encode('utf-8'),req.content)
                     if len(r) < len(r2):
+                        bug = {
+                            'name':'SQL injection',
+                            'payload':payload,
+                            'method':'POST',
+                            'parameter':param,
+                            'target':url.split('?')[0],
+                            'data':data
+                            }
                         show.bug(bug='SQL injection',payload=payload,method='POST',parameter=param,target=url.split('?')[0],link=data)
-                        break
+                        return bug
+        return None
     def Put(url):
         for param in url.split('?')[1].split('&'):
             for payload in sqli_payloads:
@@ -111,8 +155,17 @@ class Sqli:
                     r = findall(e.encode('utf-8'),save_request.get().content)
                     r2 = findall(e.encode('utf-8'),req.content)
                     if len(r) < len(r2):
+                        bug = {
+                            'name':'SQL injection',
+                            'payload':payload,
+                            'method':'PUT',
+                            'parameter':param,
+                            'target':url.split('?')[0],
+                            'data':data
+                            }
                         show.bug(bug='SQL injection',payload=payload,method='PUT',parameter=param,target=url.split('?')[0],link=data)
-                        break
+                        return bug
+        return None
 class RCE:
     def Get(url):
         for param in url.split('?')[1].split('&'):
@@ -125,8 +178,17 @@ class RCE:
                 if req == 0:
                     break
                 if r < len(findall(message.encode('utf-8'),req.content)):
+                    bug = {
+                            'name':'command injection',
+                            'payload':payload.replace('\n','%0a'),
+                            'method':'GET',
+                            'parameter':param,
+                            'link':url.replace(param,param + en(payload)),
+                            'target':url.split('?')[0]
+                        }
                     show.bug(bug='command injection',payload=payload.replace('\n','%0a'),method='GET',parameter=param,link=url.replace(param,param + en(payload)))
-                    break
+                    return bug
+        return None
     def Post(url):
         for param in url.split('?')[1].split('&'):
             for payload,message in rce_payloads.items():
@@ -141,8 +203,17 @@ class RCE:
                 if req == 0:
                     break
                 if r < len(findall(message.encode('utf-8'),req.content)):
+                    bug = {
+                        'name':'command injection',
+                        'payload':payload.replace('\n','%0a'),
+                        'method':'POST',
+                        'parameter':param,
+                        'target':url.split('?')[0],
+                        'data':data
+                        }
                     show.bug(bug='command injection',payload=payload.replace('\n','%0a'),method='POST',parameter=param,target=url.split('?')[0],link=data.replace('\n','%0a'))
-                    break
+                    return bug
+        return None
     def Put(url):
         for param in url.split('?')[1].split('&'):
             for payload,message in rce_payloads.items():
@@ -157,8 +228,17 @@ class RCE:
                 if req == 0:
                     break
                 if r < len(findall(message.encode('utf-8'),req.content)):
+                    bug = {
+                        'name':'command injection',
+                        'payload':payload.replace('\n','%0a'),
+                        'method':'POST',
+                        'parameter':param,
+                        'target':url.split('?')[0],
+                        'data':data
+                        }
                     show.bug(bug='command injection',payload=payload.replace('\n','%0a'),method='PUT',parameter=param,target=url.split('?')[0],link=data.replace('\n','%0a'))
-                    break
+                    return bug
+        return None
 class SSTI:
     def Get(url):
         for param in url.split('?')[1].split('&'):
@@ -171,8 +251,17 @@ class SSTI:
                 if req == 0:
                     break
                 if r < len(findall(message.encode('utf-8'),req.content)):
+                    bug = {
+                            'name':'template injection',
+                            'payload':payload,
+                            'method':'GET',
+                            'parameter':param,
+                            'link':url.replace(param,param + en(payload)),
+                            'target':url.split('?')[0]
+                        }
                     show.bug(bug='template injection',payload=payload,method='GET',parameter=param,link=url.replace(param,param + en(payload)))
-                    break
+                    return bug
+        return None
     def Post(url):
         for param in url.split('?')[1].split('&'):
             for payload,message in ssti_payloads.items():
@@ -187,8 +276,17 @@ class SSTI:
                 if req == 0:
                     break
                 if r < len(findall(message.encode('utf-8'),req.content)):
+                    bug = {
+                        'name':'template injection',
+                        'payload':payload,
+                        'method':'POST',
+                        'parameter':param,
+                        'target':url.split('?')[0],
+                        'data':data
+                        }
                     show.bug(bug='template injection',payload=payload,method='POST',parameter=param,target=url.split('?')[0],link=data)
-                    break
+                    return bug
+        return None
     def Put(url):
         for param in url.split('?')[1].split('&'):
             for payload,message in ssti_payloads.items():
@@ -203,8 +301,17 @@ class SSTI:
                 if req == 0:
                     break
                 if r < len(findall(message.encode('utf-8'),req.content)):
+                    bug = {
+                        'name':'template injection',
+                        'payload':payload,
+                        'method':'PUT',
+                        'parameter':param,
+                        'target':url.split('?')[0],
+                        'data':data
+                        }
                     show.bug(bug='template injection',payload=payload,method='PUT',parameter=param,target=url.split('?')[0],link=data)
-
+                    return bug
+        return None
 class CRLF:
     def Get(url):
         for param in url.split('?')[1].split('&'):
@@ -213,6 +320,14 @@ class CRLF:
                 if r == 0:
                     break
                 if 'BLATRUC' == r.headers.get('Header-Test'):
+                    bug = {
+                            'name':'CRLF injection',
+                            'payload':payload.replace('\n','%0a').replace('\r','%0d'),
+                            'method':'GET',
+                            'parameter':param,
+                            'link':url.replace(param,param + en(payload)),
+                            'target':url.split('?')[0]
+                        }
                     show.bug(
                     bug='CRLF injection',
                     payload=payload.replace('\n','%0a').replace('\r','%0d'),
@@ -220,5 +335,7 @@ class CRLF:
                     parameter=param,
                     link=url.replace(param,param + en(payload))
                             )
+                    return bug
                 else:
                     continue
+        return None

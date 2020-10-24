@@ -48,6 +48,34 @@ $ git pull
 ```bash
 $ echo "http://testphp.vulnweb.com/search.php?test=query&searchFor=1&goButton=go" | python3 scant3r.py 
 ```
+* api
+```bash
+$ python3 scant3r.py --api
+```
+```
+[knassar702@PC]:~/tools/scant3r - curl http://127.0.0.1:6040/scan/4?url=http://localhost/search?u= -sk | jq
+{
+  "Bugs": [
+    {
+      "link": "http://localhost/search?u=%73%63%61%6e%7b%7b%36%2a%36%7d%7d%74%33%72",
+      "method": "GET",
+      "name": "template injection",
+      "parameter": "u=",
+      "payload": "scan{{6*6}}t3r",
+      "target": "http://localhost/search"
+    },
+    {
+      "data": "u=scan{{6*6}}t3r",
+      "method": "POST",
+      "name": "template injection",
+      "parameter": "u=",
+      "payload": "scan{{6*6}}t3r",
+      "target": "http://localhost/search"
+    }
+  ]
+}
+
+```
 * add module
 ```bash
 $ echo "http://testphp.vulnweb.com/search.php?test=query&searchFor=1&goButton=go" | python3 scant3r.py -m headers

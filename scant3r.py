@@ -48,7 +48,7 @@ optp.add_option('-c',dest='cookie')
 optp.add_option('-r',dest='redirect',action='store_true')
 optp.add_option('-p',dest='proxy')
 optp.add_option('--nologo',dest='nologo',action='store_true')
-optp.add_option('-s',dest='ctf',action='store_true')
+optp.add_option('--api',dest='api',action='store_true')
 optp.add_option('-l',dest='List')
 optp.add_option('-m',dest='module',action='append')
 optp.add_option('-d',dest='dump',action='store_true')
@@ -66,6 +66,10 @@ else:
 if opts.help:
     print(helper)
     sys.exit()
+if opts.api:
+    api = True
+else:
+    api = False
 if opts.host:
     host = opts.host
 else:
@@ -145,6 +149,9 @@ all_options = {
 nq.Setup(proxies=proxy,cookie=cookie,dump=dump,timeout=timeout,random_agents=Random,header=Header,redirect=redirect)
 XP.Setup(host=host)
 if __name__ == '__main__':
+    if api:
+        from api import app
+        app.run(host='0.0.0.0',threaded=True,port=6040)
     if List:
         for url in List:
             all_options['url'].append(url)
@@ -193,3 +200,4 @@ if __name__ == '__main__':
     c.join()
     d.join()
     r.join()
+
