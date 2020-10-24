@@ -84,7 +84,7 @@ th, td {
 
 <p>http://localhost:6040/scan/{SCANNER_ID}?url={TAGET}</p>
 
-example : <h5>$ curl 'http://localhost:6040/scan/1?url=http://testphp.vulnweb.com/search.php?test=query&searchFor=1&goButton=go'</h5>
+example : <h5>$ curl 'http://localhost:6040/scan/1?url=http://testphp.vulnweb.com/search.php?test=query%26searchFor=1%26goButton=go'</h5>
 
 <table style="width:70%">
   <tr>
