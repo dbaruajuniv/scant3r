@@ -46,11 +46,7 @@ $ echo "http://testphp.vulnweb.com/search.php?test=query&searchFor=1&goButton=go
 ```bash
 $ python3 scant3r.py --api
 ```
-### Docker ![DOCKER](https://img.icons8.com/color/48/000000/docker.png)
-```bash
-$ docker build -t scant3r https://github.com/knassar702/scant3r.git
-$ docker run --rm -d -p 6040:6040 --name scant3r -it scant3r
-```
+
 ### API Endpoints
 * /scan/{scanid}
 * parameter: `url`
@@ -103,6 +99,11 @@ knassar702@PC]:~/tools/scant3r - curl "http://localhost:6040/scan/1?url=http://t
     }
   ]
 }
+```
+### Docker ![DOCKER](https://img.icons8.com/color/48/000000/docker.png)
+```bash
+$ docker build -t scant3r https://github.com/knassar702/scant3r.git
+$ docker run --rm -d -p 6040:6040 --name scant3r -it scant3r
 ```
 ***
 
