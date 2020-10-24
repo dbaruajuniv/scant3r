@@ -48,11 +48,11 @@ $ git pull
 ```bash
 $ echo "http://testphp.vulnweb.com/search.php?test=query&searchFor=1&goButton=go" | python3 scant3r.py 
 ```
-* api
+* ScanT3r API
 ```bash
 $ python3 scant3r.py --api
 ```
-```
+```bash
 [knassar702@PC]:~/tools/scant3r - curl http://127.0.0.1:6040/scan/4?url=http://localhost/search?u= -sk | jq
 {
   "Bugs": [
