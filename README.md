@@ -21,7 +21,59 @@ with Scant3r you will have more time to look into functions and get Easy bugs on
 | **neon** | scans admin panel from CVE-2019-20141 |
 
 ***
+### API Endpoints
+* /scan/{scanid}
+* parameter: `url`
 
+| ID              | Scanner                   |
+| :-------------    | :-------------                |
+| **1** | XSS|
+| **2** | SQLI |
+| **3** | RCE |
+| **4** | SSTI |
+| **5** | CRLF|
+
+#### Example:
+* SSTI
+```bash
+[knassar702@PC]:~/tools/scant3r - curl http://127.0.0.1:6040/scan/4?url=http://localhost/search?u= -sk | jq
+{
+  "Bugs": [
+    {
+      "link": "http://localhost/search?u=%73%63%61%6e%7b%7b%36%2a%36%7d%7d%74%33%72",
+      "method": "GET",
+      "name": "template injection",
+      "parameter": "u=",
+      "payload": "scan{{6*6}}t3r",
+      "target": "http://localhost/search"
+    },
+    {
+      "data": "u=scan{{6*6}}t3r",
+      "method": "POST",
+      "name": "template injection",
+      "parameter": "u=",
+      "payload": "scan{{6*6}}t3r",
+      "target": "http://localhost/search"
+    }
+  ]
+}
+```
+* XSS
+```bash
+knassar702@PC]:~/tools/scant3r - curl "http://localhost:6040/scan/1?url=http://testphp.vulnweb.com/search.php?test=query%26searchFor=1%26goButton=go" -sk | jq
+{
+  "Bugs": [
+    {
+      "data": "test=query&searchFor=1\">ScanT3r<svg/onload=confirm(/ScanT3r/)>web\"&goButton=go",
+      "method": "POST",
+      "name": "Corss-site scripting",
+      "parameter": "searchFor=1",
+      "payload": "\">ScanT3r<svg/onload=confirm(/ScanT3r/)>web\"",
+      "target": "http://testphp.vulnweb.com/search.php"
+    }
+  ]
+}
+```
 ## Installation
 
 ### Linux ![Linux](http://icons.iconarchive.com/icons/dakirby309/simply-styled/32/OS-Linux-icon.png)
@@ -51,30 +103,6 @@ $ echo "http://testphp.vulnweb.com/search.php?test=query&searchFor=1&goButton=go
 * ScanT3r API
 ```bash
 $ python3 scant3r.py --api
-```
-```bash
-[knassar702@PC]:~/tools/scant3r - curl http://127.0.0.1:6040/scan/4?url=http://localhost/search?u= -sk | jq
-{
-  "Bugs": [
-    {
-      "link": "http://localhost/search?u=%73%63%61%6e%7b%7b%36%2a%36%7d%7d%74%33%72",
-      "method": "GET",
-      "name": "template injection",
-      "parameter": "u=",
-      "payload": "scan{{6*6}}t3r",
-      "target": "http://localhost/search"
-    },
-    {
-      "data": "u=scan{{6*6}}t3r",
-      "method": "POST",
-      "name": "template injection",
-      "parameter": "u=",
-      "payload": "scan{{6*6}}t3r",
-      "target": "http://localhost/search"
-    }
-  ]
-}
-
 ```
 * add module
 ```bash
