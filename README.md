@@ -21,6 +21,37 @@ with Scant3r you will have more time to look into functions and get Easy bugs on
 | **neon** | scans admin panel from CVE-2019-20141 |
 
 ***
+
+## Installation
+
+### Linux ![Linux](http://icons.iconarchive.com/icons/dakirby309/simply-styled/32/OS-Linux-icon.png)
+
+```bash
+$ git clone https://github.com/knassar702/scant3r
+$ cd scant3r
+$ pip3 install -r requirements.txt
+```
+
+### Docker ![DOCKER](https://img.icons8.com/color/48/000000/docker.png)
+
+```bash
+$ docker build -t scant3r https://github.com/knassar702/scant3r.git
+$ docker run --rm -d -p 6040:6040 --name scant3r -it scant3r
+```
+### Update to latest version:
+```bash
+$ cd scant3r
+$ git pull
+```
+**Usage**
+* normal scan
+```bash
+$ echo "http://testphp.vulnweb.com/search.php?test=query&searchFor=1&goButton=go" | python3 scant3r.py 
+```
+* ScanT3r API
+```bash
+$ python3 scant3r.py --api
+```
 ### API Endpoints
 * /scan/{scanid}
 * parameter: `url`
@@ -74,36 +105,7 @@ knassar702@PC]:~/tools/scant3r - curl "http://localhost:6040/scan/1?url=http://t
   ]
 }
 ```
-## Installation
 
-### Linux ![Linux](http://icons.iconarchive.com/icons/dakirby309/simply-styled/32/OS-Linux-icon.png)
-
-```bash
-$ git clone https://github.com/knassar702/scant3r
-$ cd scant3r
-$ pip3 install -r requirements.txt
-```
-
-### Docker ![DOCKER](https://img.icons8.com/color/48/000000/docker.png)
-
-```bash
-$ docker build -t scant3r https://github.com/knassar702/scant3r.git
-$ docker run --rm -d -p 6040:6040 --name scant3r -it scant3r
-```
-### Update to latest version:
-```bash
-$ cd scant3r
-$ git pull
-```
-**Usage**
-* normal scan
-```bash
-$ echo "http://testphp.vulnweb.com/search.php?test=query&searchFor=1&goButton=go" | python3 scant3r.py 
-```
-* ScanT3r API
-```bash
-$ python3 scant3r.py --api
-```
 * add module
 ```bash
 $ echo "http://testphp.vulnweb.com/search.php?test=query&searchFor=1&goButton=go" | python3 scant3r.py -m headers
